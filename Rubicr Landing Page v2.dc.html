@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="colors_and_type.css">
+<script src="image-slot.js"></script>
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#0B1F39}
+a{color:var(--doc-blue-300);text-decoration:none}
+a:hover{color:var(--amber-400)}
+@keyframes ticker-x{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ticker-y{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+[data-rsp="bento"]>div{min-width:0}
+[data-rsp="bento"]>div *{min-width:0}
+@keyframes heroLine{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+[data-hscroll]{scrollbar-width:none}
+[data-hscroll]::-webkit-scrollbar{display:none}
+@media (max-width:1080px){
+[data-rsp="bento"]{grid-template-columns:1fr !important}
+[data-rsp="bento"]>div{grid-column:auto !important}
+[data-rsp="cols"]{grid-template-columns:1fr !important}
+[data-rsp="cols"] [data-sticky]{position:static !important}
+[data-rsp="navlinks"]{display:none !important}
+[data-rsp="g4"]{grid-template-columns:1fr 1fr !important}
+[data-rsp="hiw-sec"]{height:auto !important}
+[data-rsp="hiw-pin"]{position:static !important;height:auto !important;overflow:visible !important}
+[data-rsp="hiw-track"]{transform:none !important;flex-direction:column !important;width:100% !important}
+[data-rsp="hiw-panel"]{width:100% !important}
+[data-rsp="footer"]{flex-direction:column !important;align-items:flex-start !important;gap:18px !important}
+}
+@media (max-width:640px){
+[data-rsp="g4"]{grid-template-columns:1fr !important}
+[data-rsp="navcta2"]{display:none !important}
+}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="font-family:var(--font-body);background:#FFFFFF;color:var(--ink-900)">
+
+<!-- NAV -->
+<nav data-screen-label="Nav" style="position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(7,17,32,0.78);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08)">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:28px">
+    <a href="#top" style="display:flex;align-items:center;color:#EAF0F8"><img src="assets/rubicr_wordmark_dark_bg.png" alt="Rubicr" style="height:26px;display:block"></a>
+    <div data-rsp="navlinks" style="flex:1;display:flex;align-items:center;justify-content:center;gap:30px;font-size:13.5px;font-weight:500">
+      <a href="#stack" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">Platform</a>
+      <a href="#why" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">Industries</a>
+      <a href="#greenarc" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">GreenArc</a>
+      <a href="#thambi" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">Thambi.ai</a>
+      <a href="#impact" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">Caetis</a>
+      <a href="#voices" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">Resource Hub</a>
+      <a href="#demo" style="color:rgba(234,240,248,0.75)" style-hover="color:var(--amber-400)">About Us</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+      <a href="#demo" data-rsp="navcta2" style="border:1px solid rgba(255,255,255,0.25);color:#EAF0F8;font-weight:700;font-size:13px;padding:9px 16px;border-radius:var(--r-sm)" style-hover="border-color:var(--amber-500);color:var(--amber-400)">Get in touch</a>
+      <a href="#demo" style="background:var(--amber-600);color:#fff;font-weight:700;font-size:13px;padding:9px 16px;border-radius:var(--r-sm)" style-hover="background:var(--amber-700);color:#fff">Book a demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 01 HERO -->
+<section id="top" data-screen-label="01 Hero" style="position:relative;min-height:100vh;background:linear-gradient(180deg,#071426 0%,#0B1F39 100%);overflow:hidden;display:flex;flex-direction:column">
+  <canvas ref="{{ heroCanvasRef }}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+  <div style="position:relative;max-width:1280px;width:100%;margin:0 auto;padding:150px 24px 40px;flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber-400);margin-bottom:26px;display:flex;align-items:center;gap:10px"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber-500);animation:pulseDot 1.6s ease-in-out infinite"></span>Operating intelligence — live</div>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(40px,5.6vw,78px);line-height:1.03;letter-spacing:-0.028em;color:#EAF0F8;margin:0 0 26px;max-width:900px">
+      <span style="display:block;animation:heroLine 800ms var(--ease-out) 100ms both">Watches every signal.</span>
+      <span style="display:block;animation:heroLine 800ms var(--ease-out) 380ms both">Thinks in your context.</span>
+      <span style="display:block;color:var(--amber-500);animation:heroLine 800ms var(--ease-out) 660ms both">Acts before it costs you.</span>
+    </h1>
+    <p style="font-size:17.5px;line-height:1.6;color:rgba(234,240,248,0.72);max-width:520px;margin:0 0 34px;animation:heroLine 800ms var(--ease-out) 900ms both">Rubicr is the 24/7 process expert over your operations — a contextual AI layer that turns live operational data into decisions, around the clock.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;animation:heroLine 800ms var(--ease-out) 1050ms both">
+      <a href="#stack" style="background:var(--amber-600);color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:var(--r-sm)" style-hover="background:var(--amber-700);color:#fff">See the system</a>
+      <a href="#demo" style="border:1px solid rgba(255,255,255,0.3);color:#EAF0F8;font-weight:700;font-size:15px;padding:14px 28px;border-radius:var(--r-sm)" style-hover="border-color:var(--amber-500);color:var(--amber-400)">Book a demo</a>
+    </div>
+  </div>
+  <div style="position:relative;border-top:1px solid rgba(255,255,255,0.09);background:rgba(7,17,32,0.55)">
+    <div style="max-width:1280px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:14px;font-family:var(--font-mono);font-size:12.5px;color:rgba(234,240,248,0.65)">
+      <span style="color:var(--amber-400);display:flex;align-items:center;gap:8px;flex:none"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber-500);animation:pulseDot 1.6s ease-in-out infinite"></span>LIVE</span>
+      <span style="flex:none;color:rgba(234,240,248,0.3)">·</span>
+      <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ liveEvent }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- 02 MANIFESTO -->
+<section data-screen-label="02 Manifesto" ref="{{ maniSecRef }}" style="height:200vh;position:relative;background:#0B1F39">
+  <div style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <div ref="{{ maniRef }}" style="max-width:980px;padding:0 24px;text-align:center;font-family:var(--font-display);font-weight:600;font-size:clamp(26px,3.8vw,52px);line-height:1.24;letter-spacing:-0.02em;color:rgba(234,240,248,0.13)">
+      <sc-for list="{{ maniWords }}" as="w" hint-placeholder-count="10"><span data-a="{{ w.a }}" style="display:inline-block;margin-right:0.27em;transition:color 300ms ease">{{ w.t }}</span></sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- TRUSTED STRIP -->
+<section data-screen-label="Trusted" style="background:#fff;border-bottom:1px solid rgba(15,31,24,0.07)">
+  <div style="max-width:1280px;margin:0 auto;padding:34px 24px">
+    <div style="text-align:center;font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.1em;color:var(--ink-400);margin-bottom:20px">ENGAGED WITH 200+ ENTERPRISES ACROSS INDIA, MENA AND SOUTHEAST ASIA</div>
+    <div style="overflow:hidden">
+      <div style="display:flex;width:max-content;animation:ticker-x 30s linear infinite" style-hover="animation-play-state:paused">
+        <div style="display:flex;gap:14px;padding-right:14px">
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 01</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 02</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 03</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 04</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 05</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 06</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 07</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 08</div>
+        </div>
+        <div style="display:flex;gap:14px;padding-right:14px">
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 01</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 02</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 03</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 04</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 05</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 06</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 07</div>
+          <div style="width:140px;height:48px;border:1px solid rgba(15,31,24,0.09);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-300)">CLIENT LOGO 08</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 SYSTEM MAP -->
+<section id="stack" data-screen-label="03 Operating Stack" style="background:#F3F6FB">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(64px,8vw,100px) 24px">
+    <div data-reveal style="max-width:760px;margin-bottom:52px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-400);margin-bottom:16px">The operating stack</div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,46px);line-height:1.06;letter-spacing:-0.02em;margin:0 0 16px">Eight modules. One shared context. <span style="color:var(--amber-600)">Inspect the system.</span></h2>
+      <p style="font-size:16px;line-height:1.6;color:var(--ink-500);margin:0">RubiCr sits over your existing systems as one intelligence layer. Select a node to inspect it.</p>
+    </div>
+    <div data-rsp="cols" style="display:grid;grid-template-columns:400px 1fr;gap:44px;align-items:start" data-reveal>
+      <div style="position:relative">
+        <div style="position:absolute;left:19px;top:12px;bottom:12px;width:2px;background:linear-gradient(180deg,var(--amber-500),rgba(232,160,32,0.15))"></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ modules }}" as="m" hint-placeholder-count="8">
+            <div onClick="{{ m.pick }}" style="{{ m.rowStyle }}">
+              <span style="{{ m.dotStyle }}"></span>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-400);width:22px;flex:none">{{ m.num }}</span>
+              <span style="font-family:var(--font-display);font-weight:700;font-size:16px;flex:1">{{ m.name }}</span>
+              <span style="{{ m.tagStyle }}">{{ m.tag }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div data-sticky style="position:sticky;top:96px;min-width:0">
+        <div style="background:#0B1F39;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card-light)">
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.09);font-family:var(--font-mono);font-size:11.5px;color:rgba(234,240,248,0.6)">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--amber-500);animation:pulseDot 1.6s ease-in-out infinite"></span>
+            <span>{{ activeModHeader }}</span>
+            <span style="margin-left:auto;color:var(--amber-400)">ONLINE</span>
+          </div>
+          <div style="padding:26px 28px 8px">
+            <h3 style="font-family:var(--font-display);font-weight:700;font-size:24px;color:#EAF0F8;margin:0 0 10px">{{ activeModName }}</h3>
+            <p style="font-size:15px;line-height:1.6;color:rgba(234,240,248,0.7);margin:0 0 20px;max-width:560px">{{ activeModDesc }}</p>
+          </div>
+          <div style="position:relative;height:300px;margin:0 16px 16px;border-radius:var(--r-md);overflow:hidden;background:rgba(255,255,255,0.04)">
+            <sc-for list="{{ modules }}" as="m" hint-placeholder-count="8">
+              <div style="{{ m.panStyle }}"><image-slot id="{{ m.slot }}" shape="rect" placeholder="Module product view"></image-slot></div>
+            </sc-for>
+          </div>
+        </div>
+        <div data-note style="font-family:var(--font-mono);font-size:11px;color:var(--ink-400);margin-top:8px">SLOTS ×8 · one product screen per module — 16:9 · PNG/GIF; swaps on selection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 HOW IT WORKS -->
+<section data-screen-label="04 How it works" style="background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(48px,5vw,72px) 24px">
+    <div data-reveal style="display:flex;align-items:end;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-bottom:20px">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-400);margin-bottom:14px">How it works</div>
+        <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.8vw,42px);line-height:1.06;letter-spacing:-0.02em;margin:0">One platform between your data and your <span style="color:var(--amber-600)">decisions</span></h2>
+      </div>
+      <div style="display:flex;gap:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:0.1em">
+        <span data-stage-tag="0" style="color:var(--amber-600);transition:color 400ms ease">01 CAPTURE</span>
+        <span data-stage-tag="1" style="color:var(--ink-300);transition:color 400ms ease">02 RECONCILE</span>
+        <span data-stage-tag="2" style="color:var(--ink-300);transition:color 400ms ease">03 ACT</span>
+      </div>
+    </div>
+    <div data-reveal style="position:relative">
+      <div style="position:relative;width:100%;aspect-ratio:1920/1080;pointer-events:none">
+        <x-import component-from-global-scope="CrucibleScene" from="./crucible/animations.jsx ./crucible/crucible-scene.jsx" hint-size="100%,100%" title="RUBICR PIPELINE" tagline="EVERY SIGNAL · ONE CONTEXT · AUTONOMOUS ACTION" accent-color="#E8A020" loop-duration="12" style="position:absolute;inset:0"></x-import>
+      </div>
+    </div>
+    <div data-reveal style="position:relative;margin-top:28px">
+      <div style="position:absolute;top:5px;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--status-blue),var(--status-amber),var(--status-green));opacity:0.35"></div>
+      <div data-rsp="g4" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:44px">
+        <div data-stage-card="0" style="position:relative;padding-top:28px;transition:opacity 500ms ease,transform 500ms var(--ease-out);transform-origin:center top">
+          <span data-stage-dot style="position:absolute;top:0;left:0;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--status-blue);transition:box-shadow 400ms ease"></span>
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.14em;color:var(--ink-400);margin-bottom:10px">STAGE 01 · CAPTURE</div>
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;margin:0 0 10px">Integrates every source</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-500);margin:0">IoT sensors, ERP records, cameras, geospatial feeds — every signal your operation emits, captured into one stream.</p>
+        </div>
+        <div data-stage-card="1" style="position:relative;padding-top:28px;transition:opacity 500ms ease,transform 500ms var(--ease-out);transform-origin:center top">
+          <span data-stage-dot style="position:absolute;top:0;left:0;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--status-amber);transition:box-shadow 400ms ease"></span>
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.14em;color:var(--ink-400);margin-bottom:10px">STAGE 02 · RECONCILE</div>
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;margin:0 0 10px">Runs it through your context</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-500);margin:0">Models built for your specific process reconcile every signal against how your operation is supposed to run.</p>
+        </div>
+        <div data-stage-card="2" style="position:relative;padding-top:28px;transition:opacity 500ms ease,transform 500ms var(--ease-out);transform-origin:center top">
+          <span data-stage-dot style="position:absolute;top:0;left:0;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--status-green);transition:box-shadow 400ms ease"></span>
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.14em;color:var(--ink-400);margin-bottom:10px">STAGE 03 · ACT</div>
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;margin:0 0 10px">Delivers the decision</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-500);margin:0">The right input, to the right person, at the right time — like your own technical services expert, on every shift.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTION STRIP -->
+<div data-screen-label="Prediction strip" style="background:#071426;padding:52px 24px;text-align:center">
+  <p style="max-width:840px;margin:0 auto;font-family:var(--font-display);font-weight:500;font-size:clamp(24px,2.4vw,32px);line-height:1.3;letter-spacing:-0.015em;color:var(--amber-400)">The morning after it goes live, your operations run on prediction — not reaction.</p>
+</div>
+
+<!-- 05 THAMBI -->
+<section id="thambi" data-screen-label="05 Thambi.ai" ref="{{ thambiSecRef }}" style="background:#0B1F39">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(64px,8vw,100px) 24px">
+    <div data-reveal style="max-width:760px;margin-bottom:44px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber-400);margin-bottom:16px">The agent</div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,46px);line-height:1.06;letter-spacing:-0.02em;color:#EAF0F8;margin:0 0 14px">Ask Thambi.ai. <span style="color:var(--amber-500)">Watch it work.</span></h2>
+      <p style="font-size:16px;line-height:1.6;color:rgba(234,240,248,0.7);margin:0">Your best technical minds, available 24/7. This is a live walkthrough — pick a question.</p>
+    </div>
+    <div data-reveal style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px">
+      <sc-for list="{{ thambiChips }}" as="c" hint-placeholder-count="4">
+        <button onClick="{{ c.pick }}" style="{{ c.style }}" style-hover="border-color:var(--amber-500);color:var(--amber-400)">{{ c.label }}</button>
+      </sc-for>
+    </div>
+    <div data-rsp="cols" style="display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start" data-reveal>
+      <div style="background:#071426;border:1px solid rgba(255,255,255,0.09);border-radius:var(--r-lg);overflow:hidden;min-height:420px;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.08);font-family:var(--font-mono);font-size:11.5px;color:rgba(234,240,248,0.5)"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber-500);animation:pulseDot 1.6s ease-in-out infinite"></span>THAMBI.AI · SESSION 0417</div>
+        <div style="padding:22px 24px;flex:1">
+          <div style="font-family:var(--font-mono);font-size:14px;line-height:1.7;color:#EAF0F8;margin-bottom:18px"><span style="color:var(--amber-400)">you ›</span> {{ thambiTyped }}<span style="display:inline-block;width:8px;height:16px;background:var(--amber-400);vertical-align:text-bottom;animation:blink 1s step-end infinite"></span></div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <sc-for list="{{ thambiLines }}" as="l" hint-placeholder-count="0">
+              <div style="{{ l.style }}">{{ l.t }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="min-width:0">
+        <div style="position:relative;height:420px;border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.04)">
+          <div style="{{ pan0 }}"><image-slot id="thambi-view-opportunities" shape="rect" placeholder="Product view — opportunities"></image-slot></div>
+          <div style="{{ pan1 }}"><image-slot id="thambi-view-rootcause" shape="rect" placeholder="Product view — root-cause correlation"></image-slot></div>
+          <div style="{{ pan2 }}"><image-slot id="thambi-view-datasets" shape="rect" placeholder="Product view — geospatial datasets"></image-slot></div>
+          <div style="{{ pan3 }}"><image-slot id="thambi-view-reporting" shape="rect" placeholder="Product view — automated reporting"></image-slot></div>
+        </div>
+        <div data-note style="font-family:var(--font-mono);font-size:11px;color:rgba(234,240,248,0.4);margin-top:8px">SLOTS ×4 · one product screen per question — swaps with the conversation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 PROOF -->
+<section id="impact" data-screen-label="06 Proof" style="background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(44px,5vw,64px) 24px">
+    <div data-reveal style="max-width:760px;margin-bottom:28px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-400);margin-bottom:12px">Proof</div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,38px);line-height:1.06;letter-spacing:-0.02em;margin:0">Ambition, anchored in <span style="color:var(--amber-600)">measured outcomes</span>.</h2>
+    </div>
+    <div ref="{{ gaugeRowRef }}" data-rsp="g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px" data-reveal>
+      <sc-for list="{{ gauges }}" as="g" hint-placeholder-count="4">
+        <div style="border:1px solid rgba(15,31,24,0.1);border-radius:var(--r-lg);padding:16px 18px;display:flex;align-items:center;gap:16px">
+          <svg width="76" height="76" viewBox="0 0 120 120" style="display:block;flex:none">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(15,31,24,0.08)" stroke-width="7"></circle>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--amber-500)" stroke-width="7" stroke-linecap="round" stroke-dasharray="{{ g.dash }}" transform="rotate(-90 60 60)"></circle>
+            <text x="60" y="69" text-anchor="middle" font-weight="700" font-size="28" style="font-family:var(--font-num);fill:var(--doc-navy-900)">{{ g.num }}</text>
+          </svg>
+          <div style="font-size:13.5px;line-height:1.4;color:var(--ink-700);font-weight:500;min-width:0">{{ g.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div data-reveal style="font-family:var(--font-mono);font-size:11px;color:var(--ink-400);margin-top:12px">Measured across client deployments, FY24–FY26. Methodology available on request.</div>
+
+    <div data-reveal style="margin-top:36px;display:flex;flex-direction:column;gap:16px">
+      <div data-rsp="cols" style="display:grid;grid-template-columns:0.9fr 1.4fr;gap:0;background:#0B1F39;border-radius:var(--r-lg);overflow:hidden">
+        <div style="padding:26px 30px;border-right:1px solid rgba(255,255,255,0.08)">
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.12em;color:rgba(234,240,248,0.5);margin-bottom:14px">CASE 01 · INDUSTRIAL O&amp;G · KSA</div>
+          <div style="font-family:var(--font-num);font-weight:700;font-size:clamp(34px,3.6vw,48px);letter-spacing:-0.03em;color:var(--amber-500);line-height:1">USD 10M</div>
+          <div style="font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.55);margin-top:10px">annual savings</div>
+          <div style="display:flex;gap:28px;margin-top:18px">
+            <div><div style="font-family:var(--font-num);font-weight:700;font-size:21px;color:#EAF0F8">47%</div><div style="font-family:var(--font-mono);font-size:10.5px;color:rgba(234,240,248,0.5);margin-top:4px">fewer O&amp;M activities</div></div>
+            <div><div style="font-family:var(--font-num);font-weight:700;font-size:21px;color:#EAF0F8">152,971</div><div style="font-family:var(--font-mono);font-size:10.5px;color:rgba(234,240,248,0.5);margin-top:4px">man-hours saved / yr</div></div>
+          </div>
+        </div>
+        <div style="padding:26px 30px;display:flex;flex-direction:column;gap:12px;justify-content:center">
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1.3;color:#EAF0F8;margin:0">A $40M contract at risk. OpEx 40% above benchmark. Turned around.</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:rgba(234,240,248,0.7);margin:0">Re-engineered the O&amp;M model end-to-end: activity rationalisation, predictive maintenance and manpower redeployment across the contract scope.</p>
+          <a href="#" style="font-size:13.5px;font-weight:700;color:var(--amber-400)" style-hover="color:var(--amber-500)">Read the case study →</a>
+        </div>
+      </div>
+      <div data-rsp="cols" style="display:grid;grid-template-columns:1.4fr 0.9fr;gap:0;background:#fff;border:1px solid rgba(15,31,24,0.1);border-radius:var(--r-lg);overflow:hidden">
+        <div style="padding:26px 30px;display:flex;flex-direction:column;gap:12px;justify-content:center;border-right:1px solid rgba(15,31,24,0.08)">
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1.3;margin:0">A failed customer ESG audit. 60% of revenue at risk. Cleared in six months.</h3>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-500);margin:0">Closed every audit finding on the floor — EHS systems, worker welfare and environmental controls — then rebuilt the evidence trail for re-audit.</p>
+          <a href="#" style="font-size:13.5px;font-weight:700;color:var(--doc-blue-500)" style-hover="color:var(--amber-600)">Read the case study →</a>
+        </div>
+        <div style="padding:26px 30px">
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.12em;color:var(--ink-400);margin-bottom:14px">CASE 02 · SPECIALTY CHEMICALS · INDIA</div>
+          <div style="font-family:var(--font-num);font-weight:700;font-size:clamp(34px,3.6vw,48px);letter-spacing:-0.03em;color:var(--amber-600);line-height:1">₹300Cr</div>
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--ink-400);margin-top:10px">annual revenue protected</div>
+          <div style="display:flex;gap:28px;margin-top:18px">
+            <div><div style="font-family:var(--font-num);font-weight:700;font-size:21px;color:var(--ink-900)">Zero</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--ink-400);margin-top:4px">SMETA non-compliances</div></div>
+            <div><div style="font-family:var(--font-num);font-weight:700;font-size:21px;color:var(--ink-900)">Silver</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--ink-400);margin-top:4px">EcoVadis rating</div></div>
+          </div>
+        </div>
+      </div>
+      <div data-rsp="g4" style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+        <div style="border:1px dashed var(--doc-rule);border-radius:var(--r-lg);padding:22px 24px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.12em;color:var(--ink-400)">CASE 03 · SECTOR · REGION — PLACEHOLDER</div>
+          <h4 style="font-family:var(--font-display);font-weight:700;font-size:19px;line-height:1.35;margin:0;color:var(--ink-400)">Core line of the third case study goes here.</h4>
+          <p style="font-size:14px;line-height:1.55;color:var(--ink-400);margin:0">One paragraph on the work done. Replace this card's text directly in the editor.</p>
+        </div>
+        <div style="border:1px dashed var(--doc-rule);border-radius:var(--r-lg);padding:22px 24px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:var(--font-mono);font-size:11.5px;letter-spacing:0.12em;color:var(--ink-400)">CASE 04 · SECTOR · REGION — PLACEHOLDER</div>
+          <h4 style="font-family:var(--font-display);font-weight:700;font-size:19px;line-height:1.35;margin:0;color:var(--ink-400)">Core line of the fourth case study goes here.</h4>
+          <p style="font-size:14px;line-height:1.55;color:var(--ink-400);margin:0">One paragraph on the work done. Replace this card's text directly in the editor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SYSTEM DIFF -->
+<section id="why" data-screen-label="07 Why Rubicr" style="background:#F3F6FB">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(44px,5vw,64px) 24px">
+    <div data-reveal style="max-width:820px;margin-bottom:28px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-400);margin-bottom:12px">Why Rubicr</div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,38px);line-height:1.06;letter-spacing:-0.02em;margin:0">Why RubiCr is the most powerful <span style="color:var(--amber-600)">Operational Intelligence</span> platform</h2>
+    </div>
+    <div data-rsp="bento" style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px" data-reveal>
+      <div style="grid-column:span 3;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0">The operations team that never sleeps</h4>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">An added layer of intelligence, integrated with your data sources and always on.</p>
+        <div style="position:relative;height:110px;border-radius:var(--r-sm);overflow:hidden;margin-top:auto"><image-slot id="why-never-sleeps" shape="rect" placeholder="Card graphic / video"></image-slot></div>
+      </div>
+      <div style="grid-column:span 3;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 12px">Industrial context built across industries</h4>
+          <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Industrial expertise that has been built on your industrial context.</p>
+        </div>
+        <div style="height:170px;overflow:hidden;position:relative;border-left:1px solid var(--doc-rule);padding-left:18px">
+          <div style="animation:ticker-y 20s linear infinite" style-hover="animation-play-state:paused">
+            <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:10px">
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Speciality Chemicals</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Defense</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Petrochemicals</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Auto-Ancillary</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Personal Care</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Logistics</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Sheet-Metal &amp; Foundry</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Furniture &amp; Upholstery</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Diamonds</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Technology Services</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Government</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Philanthropy</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Not-for-Profits</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">BFSI</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:10px">
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Speciality Chemicals</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Defense</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Petrochemicals</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Auto-Ancillary</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Personal Care</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Logistics</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Sheet-Metal &amp; Foundry</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Furniture &amp; Upholstery</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Diamonds</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Technology Services</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Government</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Philanthropy</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">Not-for-Profits</span>
+              <span style="font-size:14px;font-weight:500;color:var(--ink-700)">BFSI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="grid-column:span 2;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:16.5px;margin:0">Connect across data sources</h4>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">From IoT to camera, geospatial and ERP databases.</p>
+        <div style="position:relative;height:105px;border-radius:var(--r-sm);overflow:hidden;margin-top:auto"><image-slot id="why-data-sources" shape="rect" placeholder="Card graphic / video"></image-slot></div>
+      </div>
+      <div style="grid-column:span 2;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:16.5px;margin:0">Predictive asset models</h4>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Go beyond dashboards with equipment, climate and industry risk models.</p>
+        <div style="position:relative;height:105px;border-radius:var(--r-sm);overflow:hidden;margin-top:auto"><image-slot id="why-predictive" shape="rect" placeholder="Card graphic / video"></image-slot></div>
+      </div>
+      <div style="grid-column:span 2;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:16.5px;margin:0">Geospatial-linked risk profile</h4>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Integrate NASA / MODIS data for predicting climate risk into risk models.</p>
+        <div style="position:relative;height:105px;border-radius:var(--r-sm);overflow:hidden;margin-top:auto"><image-slot id="why-geospatial" shape="rect" placeholder="Card graphic / video"></image-slot></div>
+      </div>
+      <div style="grid-column:span 3;background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0">Agentic workflows that act — not just report</h4>
+        <p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Autonomous action on your context: execute, trigger and orchestrate responses across your systems.</p>
+        <div style="position:relative;height:105px;border-radius:var(--r-sm);overflow:hidden;margin-top:auto"><image-slot id="why-agentic" shape="rect" placeholder="Card graphic / video"></image-slot></div>
+      </div>
+      <div style="grid-column:span 3;background:var(--doc-navy-900);border-radius:var(--r-lg);padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+        <h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0;color:#EAF0F8">Complying with global standards</h4>
+        <p style="font-size:14.5px;line-height:1.55;color:rgba(234,240,248,0.65);margin:0">Evidence-ready against the frameworks your buyers and regulators use.</p>
+        <div style="overflow:hidden;margin-top:auto">
+          <div style="display:flex;width:max-content;animation:ticker-x 26s linear infinite" style-hover="animation-play-state:paused">
+            <div style="display:flex;gap:10px;padding-right:10px">
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">GRI</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">BRSR</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">CSRD</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISSB</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">TCFD</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISO 14001</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISO 45001</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">SMETA</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">EcoVadis</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">CBAM</span>
+            </div>
+            <div style="display:flex;gap:10px;padding-right:10px">
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">GRI</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">BRSR</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">CSRD</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISSB</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">TCFD</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISO 14001</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">ISO 45001</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">SMETA</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">EcoVadis</span>
+              <span style="border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--font-mono);font-size:12px;color:rgba(234,240,248,0.75)">CBAM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 GREENARC -->
+<section id="greenarc" data-screen-label="08 GreenArc" style="background:#fff;border-top:1px solid rgba(15,31,24,0.06)">
+  <div style="max-width:1280px;margin:0 auto;padding:clamp(64px,8vw,100px) 24px" data-reveal>
+    <div style="max-width:760px;margin-bottom:44px">
+      <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-400);margin-bottom:16px">Consulting &amp; services</div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,46px);line-height:1.06;letter-spacing:-0.02em;margin:0 0 14px">GreenArc: Forward Deployed assets for solving <span style="color:var(--doc-blue-500)">critical challenges</span></h2>
+      <p style="font-size:16px;line-height:1.6;color:var(--ink-500);margin:0">When the problem is deep, industry-specific and contextual, our consulting arm works it on-site.</p>
+    </div>
+    <div data-rsp="cols" style="display:grid;grid-template-columns:1fr 1fr;column-gap:56px">
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">01</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Production Optimization</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Hands-on work to lift throughput and reduce downtime — engineered for your specific process.</p></div></div>
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">02</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Inventory Management</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Right-size inventory across raw materials and finished goods, so capital isn't idle on the floor.</p></div></div>
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">03</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Asset Utilization</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Get more from the assets you already have — before any conversation about new capex.</p></div></div>
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">04</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Health &amp; Safety Improvement</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">On-ground fixes that close the gap between your safety policy and the floor.</p></div></div>
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);border-bottom:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">05</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Supply Chain Traceability</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Build the traceability your buyers and regulators demand — supplier by supplier.</p></div></div>
+      <div style="padding:24px 18px;border-top:1px solid rgba(15,31,24,0.1);border-bottom:1px solid rgba(15,31,24,0.1);display:flex;gap:16px" style-hover="background:#F7F9FC;box-shadow:inset 3px 0 0 var(--amber-500)"><span style="font-family:var(--font-mono);font-size:12px;color:var(--amber-600);flex:none">06</span><div><h4 style="font-family:var(--font-display);font-weight:700;font-size:17px;margin:0 0 6px">Energy &amp; Sustainability Strategy</h4><p style="font-size:13.5px;line-height:1.5;color:var(--ink-500);margin:0">Turn compliance obligations into a real energy and decarbonization roadmap.</p></div></div>
+    </div>
+    <a href="#demo" style="display:inline-block;background:var(--amber-600);color:#fff;font-weight:700;font-size:15px;padding:13px 26px;border-radius:var(--r-sm);margin-top:36px" style-hover="background:var(--amber-700);color:#fff">Try GreenArc</a>
+  </div>
+</section>
+
+<!-- 09 TESTIMONIALS -->
+<section id="voices" data-screen-label="09 Testimonials" style="background:#F3F6FB">
+  <div style="max-width:1240px;margin:0 auto;padding:clamp(64px,8vw,96px) 24px 72px;text-align:center" data-reveal>
+    <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.2vw,42px);line-height:1.08;letter-spacing:-0.02em;margin:0 0 12px">What our customers are <span style="color:var(--amber-600)">saying</span></h2>
+    <p style="font-size:15.5px;color:var(--ink-500);margin:0">Operators across India, MENA and Southeast Asia run on RubiCr. Read their words.</p>
+  </div>
+  <div style="overflow:hidden;padding-bottom:96px" data-reveal>
+    <div data-ticker-x style="display:flex;width:max-content;animation:ticker-x 46s linear infinite" style-hover="animation-play-state:paused">
+      <div style="display:flex;gap:20px;padding-right:20px">
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none"><image-slot id="testi-photo-1" shape="circle" placeholder=" "></image-slot></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none"><image-slot id="testi-logo-1" shape="rect" fit="contain" placeholder="Logo"></image-slot></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none"><image-slot id="testi-photo-2" shape="circle" placeholder=" "></image-slot></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none"><image-slot id="testi-logo-2" shape="rect" fit="contain" placeholder="Logo"></image-slot></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none"><image-slot id="testi-photo-3" shape="circle" placeholder=" "></image-slot></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none"><image-slot id="testi-logo-3" shape="rect" fit="contain" placeholder="Logo"></image-slot></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none"><image-slot id="testi-photo-4" shape="circle" placeholder=" "></image-slot></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none"><image-slot id="testi-logo-4" shape="rect" fit="contain" placeholder="Logo"></image-slot></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;padding-right:20px">
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E7ECF3"></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none;border-radius:6px;background:#E7ECF3"></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E7ECF3"></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none;border-radius:6px;background:#E7ECF3"></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E7ECF3"></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none;border-radius:6px;background:#E7ECF3"></div>
+          </div>
+        </div>
+        <div style="width:min(390px,86vw);background:#fff;border:1px solid rgba(15,31,24,0.08);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left">
+          <div style="color:var(--amber-500);font-size:15px;letter-spacing:3px">★★★★★</div>
+          <p style="font-size:14.5px;line-height:1.6;color:var(--ink-700);margin:0;flex:1">"Placeholder quote — replace with the customer's testimonial. Two to three sentences on what changed after RubiCr went live."</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;flex:none;border-radius:50%;background:#E7ECF3"></div>
+            <div style="flex:1"><div style="font-weight:700;font-size:14px">Name Surname</div><div style="font-size:12.5px;color:var(--ink-400)">Title, Company</div></div>
+            <div style="width:84px;height:30px;flex:none;border-radius:6px;background:#E7ECF3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 CTA + FOOTER -->
+<section id="demo" data-screen-label="10 Demo CTA" style="position:relative;background:linear-gradient(180deg,#0B1F39 0%,#071426 100%);overflow:hidden">
+  <canvas ref="{{ ctaCanvasRef }}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+  <div style="position:relative;max-width:1280px;margin:0 auto;padding:clamp(80px,10vw,130px) 24px;text-align:center">
+    <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber-400);margin-bottom:20px">Demo</div>
+    <h2 style="font-family:var(--font-display);font-weight:700;font-size:clamp(32px,4.6vw,54px);line-height:1.05;letter-spacing:-0.025em;color:#EAF0F8;margin:0 auto 18px;max-width:760px">Experience Rubicr on your own operations</h2>
+    <p style="font-size:16.5px;line-height:1.6;color:rgba(234,240,248,0.7);max-width:480px;margin:0 auto 36px">Thirty minutes, your data, your context. See what your 24/7 process expert finds on day one.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+      <a href="#" style="background:var(--amber-600);color:#fff;font-weight:700;font-size:15px;padding:15px 32px;border-radius:var(--r-sm)" style-hover="background:var(--amber-700);color:#fff">Book a demo</a>
+      <a href="mailto:hello@rubicr.ai" style="border:1px solid rgba(255,255,255,0.3);color:#EAF0F8;font-weight:700;font-size:15px;padding:15px 32px;border-radius:var(--r-sm)" style-hover="border-color:var(--amber-500);color:var(--amber-400)">Get in touch</a>
+    </div>
+  </div>
+  <footer style="position:relative;border-top:1px solid rgba(255,255,255,0.1)">
+    <div data-rsp="footer" style="max-width:1280px;margin:0 auto;padding:30px 24px;display:flex;align-items:center;gap:32px">
+      <img src="assets/rubicr_wordmark_dark_bg.png" alt="Rubicr" style="height:24px;display:block">
+      <div style="display:flex;gap:24px;font-size:13px;flex-wrap:wrap">
+        <a href="#stack" style="color:rgba(234,240,248,0.6)" style-hover="color:var(--amber-400)">Platform</a>
+        <a href="#thambi" style="color:rgba(234,240,248,0.6)" style-hover="color:var(--amber-400)">Thambi.ai</a>
+        <a href="#greenarc" style="color:rgba(234,240,248,0.6)" style-hover="color:var(--amber-400)">GreenArc</a>
+        <a href="#impact" style="color:rgba(234,240,248,0.6)" style-hover="color:var(--amber-400)">Case Studies</a>
+        <a href="mailto:hello@rubicr.ai" style="color:rgba(234,240,248,0.6)" style-hover="color:var(--amber-400)">hello@rubicr.ai</a>
+      </div>
+      <span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:rgba(234,240,248,0.4)">© 2026 Impactree Data Technologies · An Impactree company</span>
+    </div>
+  </footer>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;full&quot;,&quot;minimal&quot;],&quot;default&quot;:&quot;full&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;particleDensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:30,&quot;max&quot;:160,&quot;step&quot;:5,&quot;default&quot;:90,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showSlotNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { activeMod: 0, scenario: 0, typed: '', visLines: 0, gauge: 0, event: 0 };
+  rootRef = React.createRef();
+  heroCanvasRef = React.createRef();
+  ctaCanvasRef = React.createRef();
+  maniSecRef = React.createRef();
+  maniRef = React.createRef();
+  thambiSecRef = React.createRef();
+  gaugeRowRef = React.createRef();
+
+  MODS = [
+    { name: 'Operations', tag: 'CORE', desc: 'Live visibility and diagnosis across every line, shift and site.', slot: 'mod-operations' },
+    { name: 'Sustainability', tag: 'DATA', desc: 'ESG data, targets and disclosures wired to actual operations.', slot: 'mod-sustainability' },
+    { name: 'Assets', tag: 'PREDICT', desc: 'Health, utilisation and predictive maintenance for critical equipment.', slot: 'mod-assets' },
+    { name: 'Health & Safety', tag: 'GUARD', desc: 'Leading indicators and interventions before incidents happen.', slot: 'mod-ehs' },
+    { name: 'Talent Management', tag: 'PEOPLE', desc: 'Skills, deployment and productivity mapped to the process.', slot: 'mod-talent' },
+    { name: 'Risk & Compliance', tag: 'LIVE', desc: 'A live risk register that scores, escalates and resolves.', slot: 'mod-risk' },
+    { name: 'Supply Chain Resilience', tag: 'TRACE', desc: 'Traceability and disruption sensing across every tier.', slot: 'mod-supply' },
+    { name: 'Social Impact', tag: 'FIELD', desc: 'Community programmes measured with operational rigour.', slot: 'mod-social' }
+  ];
+  EVENTS = [
+    '14:02:11 · LINE 3 · vibration anomaly detected → work order raised → assigned to B-shift',
+    '14:05:48 · ENERGY · demand spike reconciled against production plan · no action needed',
+    '14:11:02 · SUPPLY · tier-2 supplier delay sensed · alternate routing proposed',
+    '14:19:37 · EHS · near-miss pattern flagged on bay 4 · intervention scheduled',
+    '14:26:54 · COMPLIANCE · BRSR evidence pack updated automatically · 3 controls verified',
+    '14:33:20 · ASSETS · compressor C-7 health at 82% · maintenance window suggested Fri 06:00'
+  ];
+  SCEN = [
+    { label: 'Where are we losing efficiency?', q: 'Where are we losing efficiency this week?', lines: [
+      { k: 0, t: 'scanning 42 live signals across 3 sites…' },
+      { k: 1, t: 'Line 2 changeover time up 18% vs baseline' },
+      { k: 1, t: 'root pattern: delayed material staging on B-shift' },
+      { k: 2, t: '→ recommendation: re-sequence staging · est. +6.2% OEE' },
+      { k: 2, t: '→ action drafted, pending supervisor approval' } ] },
+    { label: 'Why did costs spike?', q: 'Why did energy cost spike on Tuesday?', lines: [
+      { k: 0, t: 'correlating energy, production and maintenance logs…' },
+      { k: 1, t: 'chiller 2 ran at full load during a planned line stop' },
+      { k: 1, t: 'cause: interlock override left active after maintenance' },
+      { k: 2, t: '→ interlock restored · recurrence alert configured' },
+      { k: 2, t: '→ estimated avoidable cost: ₹4.1L / month' } ] },
+    { label: "What's our climate risk?", q: "What's our flood risk exposure next quarter?", lines: [
+      { k: 0, t: 'pulling NASA / MODIS geospatial datasets for your sites…' },
+      { k: 1, t: 'Site C: 90-day flood probability elevated to 22%' },
+      { k: 1, t: 'exposed assets: raw material store, substation 2' },
+      { k: 2, t: '→ mitigation plan drafted · insurance evidence attached' },
+      { k: 2, t: '→ simulation available in the risk register' } ] },
+    { label: 'Prepare the disclosure pack', q: 'Prepare the BRSR disclosure pack.', lines: [
+      { k: 0, t: 'assembling evidence across 9 principles…' },
+      { k: 1, t: '214 data points reconciled from operations, EHS and HR' },
+      { k: 1, t: '2 gaps found: water withdrawal (Site B), LTIFR attestation' },
+      { k: 2, t: '→ gap owners notified · draft pack ready for review' },
+      { k: 2, t: '→ audit trail attached to every figure' } ] }
+  ];
+  GAUGES = [
+    { v: 100, num: '100%', label: 'Increase in production metrics' },
+    { v: 35, num: '−35%', label: 'Employee number optimized' },
+    { v: 50, num: '50%', label: 'Optimization in asset performance' },
+    { v: 60, num: '−60%', label: 'Reduced workplace incidents' }
+  ];
+  DIFF = [
+    'vibration alarm · line 3 — buried in a daily report',
+    'energy spike · Tue 02:00 — noticed three weeks later',
+    'supplier delay · tier 2 — discovered at the dock',
+    'near-miss pattern · bay 4 — logged, never analysed',
+    'disclosure deadline — a quarter-end scramble'
+  ];
+  DIFFR = [
+    'vibration alarm · diagnosed, work order raised in 4 min',
+    'energy spike · root cause attached, interlock fixed',
+    'supplier delay · sensed early, alternate routed',
+    'near-miss pattern · intervention scheduled proactively',
+    'disclosure pack · assembled continuously, always ready'
+  ];
+
+  constructor(props) {
+    super(props);
+    const txt = 'Supporting modern operators with the technical resources to make sharper decisions and engineer their process for scale — from the shopfloor to the boardroom.';
+    const accents = ['sharper', 'decisions', 'scale', 'shopfloor', 'boardroom.'];
+    this.maniWords = txt.split(' ').map(t => ({ t, a: accents.includes(t) ? '1' : '0' }));
+    this._timers = [];
+  }
+
+  componentDidMount() {
+    const motion = this.props.motion ?? 'full';
+    if (motion === 'full') {
+      this._stopHero = this.startField(this.heroCanvasRef.current, { count: this.props.particleDensity ?? 90 });
+      this._stopCta = this.startField(this.ctaCanvasRef.current, { count: Math.round((this.props.particleDensity ?? 90) * 0.55) });
+    }
+    this._onScroll = () => { this.maniScroll(); };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onScroll();
+    const root = this.rootRef.current;
+    if (root && motion === 'full') {
+      const els = root.querySelectorAll('[data-reveal]');
+      const io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; io.unobserve(e.target); }
+      }), { threshold: 0.1 });
+      els.forEach(el => {
+        if (el.getBoundingClientRect().top > window.innerHeight * 0.9) {
+          el.style.opacity = '0'; el.style.transform = 'translateY(26px)';
+          el.style.transition = 'opacity 700ms var(--ease-out), transform 700ms var(--ease-out)';
+          io.observe(el);
+        }
+      });
+      this._io = io;
+    }
+    if (this.gaugeRowRef.current) {
+      const gio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { this.animateGauges(); gio.disconnect(); } }), { threshold: 0.35 });
+      gio.observe(this.gaugeRowRef.current); this._gio = gio;
+    }
+    if (this.thambiSecRef.current) {
+      const tio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { this.play(0); tio.disconnect(); } }), { threshold: 0.3 });
+      tio.observe(this.thambiSecRef.current); this._tio = tio;
+    }
+    this._onStage = e => {
+      const s = e.detail, r = this.rootRef.current;
+      if (!r) return;
+      r.querySelectorAll('[data-stage-card]').forEach(el => {
+        const on = Number(el.dataset.stageCard) === s;
+        el.style.opacity = on ? '1' : '0.38';
+        el.style.transform = on ? 'scale(1.05)' : 'scale(0.97)';
+        const dot = el.querySelector('[data-stage-dot]');
+        if (dot) dot.style.boxShadow = on ? '0 0 0 5px rgba(232,160,32,0.22)' : 'none';
+      });
+      r.querySelectorAll('[data-stage-tag]').forEach(el => {
+        el.style.color = Number(el.dataset.stageTag) === s ? 'var(--amber-600)' : 'var(--ink-300)';
+      });
+    };
+    window.addEventListener('crucible-stage', this._onStage);
+    this._evT = setInterval(() => this.setState(s => ({ event: (s.event + 1) % this.EVENTS.length })), 3400);
+    if ((this.props.showSlotNotes ?? true) === false && root) root.querySelectorAll('[data-note]').forEach(n => { n.style.display = 'none'; });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('crucible-stage', this._onStage);
+    [this._io, this._gio, this._tio].forEach(o => o && o.disconnect());
+    if (this._stopHero) this._stopHero(); if (this._stopCta) this._stopCta();
+    clearInterval(this._evT); this.clearPlay();
+  }
+
+  startField(canvas, opts) {
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, raf, mx = -9999, my = -9999;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const resize = () => {
+      const r = canvas.getBoundingClientRect();
+      w = r.width; h = r.height;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    const N = Math.min(opts.count, Math.max(30, Math.round(window.innerWidth / 14)));
+    const pts = Array.from({ length: N }, () => ({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35 }));
+    const onMove = e => { const r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; };
+    const onLeave = () => { mx = -9999; my = -9999; };
+    window.addEventListener('resize', resize);
+    canvas.parentElement.addEventListener('mousemove', onMove);
+    canvas.parentElement.addEventListener('mouseleave', onLeave);
+    const tick = () => {
+      ctx.clearRect(0, 0, w, h);
+      const hub = { x: w * 0.74, y: h * 0.42 };
+      for (const p of pts) {
+        const dxm = p.x - mx, dym = p.y - my, dm = Math.hypot(dxm, dym);
+        if (dm < 120 && dm > 0.1) { p.vx += (dxm / dm) * 0.03; p.vy += (dym / dm) * 0.03; }
+        p.vx *= 0.99; p.vy *= 0.99;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+      }
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = dx * dx + dy * dy;
+          if (d < 12100) {
+            ctx.strokeStyle = 'rgba(120,155,205,' + (0.22 * (1 - d / 12100)).toFixed(3) + ')';
+            ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+          }
+        }
+      }
+      const near = pts.map(p => ({ p, d: Math.hypot(p.x - hub.x, p.y - hub.y) })).sort((a, b) => a.d - b.d).slice(0, 7);
+      for (const { p, d } of near) {
+        ctx.strokeStyle = 'rgba(232,160,32,' + Math.max(0.05, 0.4 - d / 900).toFixed(3) + ')';
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(hub.x, hub.y); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(150,180,220,0.7)';
+      for (const p of pts) { ctx.beginPath(); ctx.arc(p.x, p.y, 1.4, 0, 6.283); ctx.fill(); }
+      const g = ctx.createRadialGradient(hub.x, hub.y, 0, hub.x, hub.y, 46);
+      g.addColorStop(0, 'rgba(232,160,32,0.55)'); g.addColorStop(1, 'rgba(232,160,32,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hub.x, hub.y, 46, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#E8A020'; ctx.beginPath(); ctx.arc(hub.x, hub.y, 4.5, 0, 6.283); ctx.fill();
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); canvas.parentElement.removeEventListener('mousemove', onMove); canvas.parentElement.removeEventListener('mouseleave', onLeave); };
+  }
+
+  maniScroll() {
+    const sec = this.maniSecRef.current, box = this.maniRef.current;
+    if (!sec || !box) return;
+    const r = sec.getBoundingClientRect();
+    const total = sec.offsetHeight - window.innerHeight;
+    const p = Math.min(1, Math.max(0, -r.top / (total * 0.85)));
+    const spans = box.children;
+    const lit = Math.round(p * spans.length);
+    for (let i = 0; i < spans.length; i++) {
+      const on = i < lit;
+      spans[i].style.color = on ? (spans[i].dataset.a === '1' ? 'var(--amber-500)' : '#EAF0F8') : '';
+    }
+  }
+  animateGauges() {
+    const t0 = performance.now(), dur = 1600;
+    const step = t => {
+      const p = Math.min(1, (t - t0) / dur);
+      this.setState({ gauge: 1 - Math.pow(1 - p, 3) });
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  clearPlay() { this._timers.forEach(clearTimeout); this._timers = []; if (this._typeT) clearInterval(this._typeT); }
+  play(i) {
+    this.clearPlay();
+    this.setState({ scenario: i, typed: '', visLines: 0 });
+    const q = this.SCEN[i].q; let c = 0;
+    this._typeT = setInterval(() => {
+      c++;
+      this.setState({ typed: q.slice(0, c) });
+      if (c >= q.length) {
+        clearInterval(this._typeT);
+        this.SCEN[i].lines.forEach((_, li) => {
+          this._timers.push(setTimeout(() => this.setState({ visLines: li + 1 }), 500 + li * 520));
+        });
+      }
+    }, 26);
+  }
+
+  renderVals() {
+    const st = this.state;
+    const modules = this.MODS.map((m, i) => {
+      const active = st.activeMod === i;
+      return {
+        ...m, num: String(i + 1).padStart(2, '0'),
+        pick: () => this.setState({ activeMod: i }),
+        rowStyle: { position: 'relative', display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px 14px 40px', borderRadius: 'var(--r-md)', cursor: 'pointer', background: active ? '#fff' : 'transparent', boxShadow: active ? 'var(--shadow-card-light)' : 'none', border: active ? '1px solid rgba(15,31,24,0.08)' : '1px solid transparent', transition: 'all 200ms var(--ease-out)' },
+        dotStyle: { position: 'absolute', left: '14px', width: '12px', height: '12px', borderRadius: '50%', background: active ? 'var(--amber-500)' : '#fff', border: '2px solid ' + (active ? 'var(--amber-500)' : 'rgba(15,31,24,0.25)'), boxShadow: active ? '0 0 0 5px rgba(232,160,32,0.18)' : 'none', transition: 'all 200ms var(--ease-out)' },
+        tagStyle: { fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.1em', color: active ? 'var(--amber-600)' : 'var(--ink-300)', border: '1px solid ' + (active ? 'var(--amber-500)' : 'rgba(15,31,24,0.15)'), borderRadius: 'var(--r-pill)', padding: '3px 9px', transition: 'all 200ms var(--ease-out)' },
+        panStyle: { position: 'absolute', inset: 0, opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none', transition: 'opacity 350ms var(--ease-out)' }
+      };
+    });
+    const am = this.MODS[st.activeMod];
+    const thambiChips = this.SCEN.map((s, i) => ({
+      label: s.label, pick: () => this.play(i),
+      style: { fontFamily: 'var(--font-mono)', fontSize: '12.5px', padding: '10px 18px', borderRadius: 'var(--r-pill)', cursor: 'pointer', background: st.scenario === i ? 'var(--amber-600)' : 'transparent', color: st.scenario === i ? '#fff' : 'rgba(234,240,248,0.7)', border: '1px solid ' + (st.scenario === i ? 'var(--amber-600)' : 'rgba(255,255,255,0.25)'), transition: 'all 200ms var(--ease-out)' }
+    }));
+    const lineStyle = k => ({
+      fontFamily: 'var(--font-mono)', fontSize: '13px', lineHeight: 1.6,
+      color: k === 0 ? 'rgba(234,240,248,0.45)' : k === 2 ? 'var(--amber-400)' : 'rgba(234,240,248,0.85)',
+      paddingLeft: '14px', borderLeft: '2px solid ' + (k === 2 ? 'var(--amber-500)' : 'rgba(255,255,255,0.12)')
+    });
+    const thambiLines = this.SCEN[st.scenario].lines.slice(0, st.visLines).map(l => ({ t: l.t, style: lineStyle(l.k) }));
+    const C = 2 * Math.PI * 52;
+    const gauges = this.GAUGES.map(g => ({ num: g.num, label: g.label, dash: (C * (g.v / 100) * st.gauge).toFixed(1) + ' ' + C.toFixed(1) }));
+    const pan = i => ({ position: 'absolute', inset: 0, opacity: st.scenario === i ? 1 : 0, pointerEvents: st.scenario === i ? 'auto' : 'none', transition: 'opacity 350ms var(--ease-out)' });
+    return {
+      rootRef: this.rootRef, heroCanvasRef: this.heroCanvasRef, ctaCanvasRef: this.ctaCanvasRef,
+      maniSecRef: this.maniSecRef, maniRef: this.maniRef,
+      thambiSecRef: this.thambiSecRef, gaugeRowRef: this.gaugeRowRef,
+      maniWords: this.maniWords, modules,
+      activeModHeader: 'MODULE ' + String(st.activeMod + 1).padStart(2, '0') + ' · ' + am.name.toUpperCase(),
+      activeModName: am.name, activeModDesc: am.desc,
+      liveEvent: this.EVENTS[st.event],
+      thambiChips, thambiTyped: st.typed, thambiLines,
+      pan0: pan(0), pan1: pan(1), pan2: pan(2), pan3: pan(3),
+      gauges,
+      diffLeft: this.DIFF.map(t => ({ t })), diffRight: this.DIFFR.map(t => ({ t }))
+    };
+  }
+}
+</script>
+</body>
+</html>

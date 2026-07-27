@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><style>body{margin:0;background:#fff}img{display:block;width:100vw}</style></head><body>
+<div id="status" style="font:20px monospace;padding:8px">loading…</div>
+<img id="view">
+<script type="module">
+import * as pdfjs from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+const doc = await pdfjs.getDocument('miro.pdf').promise;
+const page = await doc.getPage(1);
+const scale = 2, N = 8;
+const vp = page.getViewport({scale});
+const big = document.createElement('canvas');
+big.width = vp.width; big.height = vp.height;
+const bctx = big.getContext('2d');
+bctx.fillStyle='#fff'; bctx.fillRect(0,0,big.width,big.height);
+document.getElementById('status').textContent = 'rendering full page…';
+await page.render({canvasContext: bctx, viewport: vp}).promise;
+const tileH = Math.ceil(big.height/N);
+window.tiles = [];
+const c = document.createElement('canvas');
+c.width = big.width; c.height = tileH;
+for (let i=0;i<N;i++){
+  const ctx = c.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height);
+  ctx.drawImage(big, 0, -i*tileH);
+  window.tiles.push(c.toDataURL('image/jpeg',0.85));
+}
+window.showTile = i => { document.getElementById('view').src = window.tiles[i]; };
+window.done = true;
+document.getElementById('status').textContent = 'done';
+</script></body></html>

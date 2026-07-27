@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><style>body{margin:0;background:#222}canvas{display:block;width:100vw}</style></head><body>
+<canvas id="c"></canvas>
+<script type="module">
+import * as pdfjs from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+const params = new URLSearchParams(location.search);
+const scale = parseFloat(params.get('scale')||'0.5');
+const doc = await pdfjs.getDocument('miro.pdf').promise;
+const page = await doc.getPage(1);
+let vp = page.getViewport({scale});
+window.pageSize = {w: vp.width/scale, h: vp.height/scale};
+const c = document.getElementById('c');
+// optional crop region in pdf units: x,y,w,h
+let region = params.get('region');
+if (region) {
+  const [x,y,w,h] = region.split(',').map(Number);
+  vp = page.getViewport({scale, offsetX: -x*scale, offsetY: -y*scale});
+  c.width = w*scale; c.height = h*scale;
+} else { c.width = vp.width; c.height = vp.height; }
+await page.render({canvasContext: c.getContext('2d'), viewport: vp}).promise;
+window.done = true;
+document.title = 'done ' + JSON.stringify(window.pageSize);
+</script></body></html>
